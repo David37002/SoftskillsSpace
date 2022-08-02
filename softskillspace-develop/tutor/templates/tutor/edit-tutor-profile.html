@@ -1,0 +1,146 @@
+{% extends "partials/_account_layout.html" %}
+{% load static %}
+
+{% load i18n %}
+{% load account %}
+
+{% block title %} {% trans "Edit Tutor profile" %} {% endblock %}
+
+{% block body %}
+
+<!-- Main content START -->
+<div class="col-xl-9">
+  <!-- Edit profile START -->
+  <div class="card bg-transparent border rounded-3">
+    <!-- Card header -->
+    <div class="card-header bg-transparent border-bottom">
+      <h3 class="card-header-title mb-0">Tutor Profile</h3>
+    </div>
+    <!-- Card body START -->
+    <div class="card-body">
+      <!-- Form -->
+      <form class="row g-4" method="POST" enctype="multipart/form-data">
+        {% include 'partials/_form_errors.html' %}
+        <!-- Profile picture -->
+        <div class="col-12 justify-content-center align-items-center">
+          <label class="form-label">Profile picture</label>
+          <div class="d-flex align-items-center">
+            <label class="position-relative me-4" for="profile_pic" title="Replace this pic">
+              <!-- Avatar place holder -->
+              <span class="avatar avatar-xl">
+                <img id="profile_pic-preview" class="avatar-img rounded-circle border border-white border-3 shadow profile_pic-preview" src="{{user.image_url}}" alt="{{user}} image">
+              </span>
+              <!-- Remove btn -->
+              <button type="button" class="uploadremove"><i class="bi bi-x text-white"></i></button>
+            </label>
+            <!-- Upload button -->
+            <label class="btn btn-primary-soft mb-0" for="profile_pic">Change</label>
+            <input id="profile_pic" class="form-control d-none" type="file" name="profile_pic" accept="image/*">
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div class="col-md-8">
+          {{form.bio.label_tag}}
+          {{form.bio}}
+        </div>
+
+        <!-- Rate Per Hour -->
+        <div class="col-md-4">
+          {{form.rate_per_hour.label_tag}}
+          <div class="input-group">
+            <span class="input-group-text">₦</span>
+            {{form.rate_per_hour}}
+          </div>
+        </div>
+
+        <!-- Account No -->
+        <div class="col-md-6">
+          {{form.account_no.label_tag}}
+          {{form.account_no}}
+        </div>
+
+        <!-- Sort Code -->
+        <div class="col-md-6">
+          {{form.sort_code.label_tag}}
+          {{form.sort_code}}
+        </div>
+
+        <!-- Street -->
+        <div class="col-md-6">
+          {{form.street.label_tag}}
+          {{form.street}}
+        </div>
+
+        <!-- Town -->
+        <div class="col-md-6">
+          {{form.town.label_tag}}
+          {{form.town}}
+        </div>
+
+        <!-- City -->
+        <div class="col-md-6">
+          {{form.city.label_tag}}
+          {{form.city}}
+        </div>
+
+        <!-- Town -->
+        <div class="col-md-6">
+          {{form.post_code.label_tag}}
+          {{form.post_code}}
+        </div>
+
+        <!-- Save button -->
+        <div class="d-sm-flex justify-content-end">
+          <button type="submit" class="btn btn-primary mb-0">Save changes</button>
+        </div>
+      </form>
+    </div>
+    <!-- Card body END -->
+  </div>
+  <!-- Edit profile END -->
+
+</div>
+<!-- Main content END -->
+
+{% endblock body %}
+
+{% block scripts %}
+<script>
+  $("#profile_pic").change(function () {
+    let fd = new FormData();
+    let files = $('#profile_pic')[0].files;
+    console.log(files)
+
+    if (files.length > 0) {
+      fd.append('file', files[0]);
+    }
+
+    $.ajax({
+      url: `{% url 'home:update-image' %}`,
+      method: "POST",
+      data: fd,
+      contentType: false,
+      processData: false,
+      headers: { 'X-CSRFToken': '{{csrf_token}}' },
+      success: function (res) {
+        console.log(res)
+        if (res.success == true) {
+          $(".profile_pic-preview").attr("src", res.image_url);
+        }
+      }
+    })
+  });
+
+  $(".uploadremove").click(function () {
+    $.ajax({
+      url: `{% url 'home:remove-image' %}`,
+      method: "POST",
+      headers: { 'X-CSRFToken': '{{csrf_token}}' },
+      success: function (res) {
+        $(".profile_pic-preview").attr("src", res.image_url)
+      }
+    })
+  });
+</script>
+{% endblock scripts %}

@@ -1,0 +1,58 @@
+{% extends "partials/_account_layout.html" %}
+{% load static %}
+
+{% load i18n %}
+{% load account %}
+
+{% block title %} {% trans "Edit Tutor availability" %} {% endblock %}
+
+{% block body %}
+
+<!-- Main content START -->
+<div class="col-xl-9">
+  <!-- Edit profile START -->
+  <div class="card bg-transparent border rounded-3">
+    <!-- Card header -->
+    <div class="card-header bg-transparent border-bottom">
+      <h3 class="card-header-title mb-0">Tutor availability</h3>
+    </div>
+    <!-- Card body START -->
+    <div class="card-body">
+      <!-- Form -->
+      <form class="row g-4" method="POST">
+        {% include 'partials/_form_errors.html' %}
+
+        <!-- Username -->
+        <form class="row g-4" method="post" >
+          <!-- Monday -->
+          {% for field in form %}
+            <div class="col-sm-6">
+              {{field.label_tag}}
+              {{field}}
+            </div>
+          {% endfor %}
+
+
+          <!-- Save button -->
+          <div class="d-sm-flex justify-content-end">
+            <button type="submit" class="btn btn-primary mb-0">Save changes</button>
+          </div>
+        </form>
+
+
+      </form>
+    </div>
+    <!-- Card body END -->
+  </div>
+  <!-- Edit profile END -->
+
+</div>
+<!-- Main content END -->
+
+{% endblock body %}
+
+{% block scripts %}
+<script>
+
+</script>
+{% endblock scripts %}

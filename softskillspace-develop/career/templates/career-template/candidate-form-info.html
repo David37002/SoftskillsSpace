@@ -1,0 +1,25 @@
+{% extends "partials/_base.html" %}
+{% load static i18n %}
+{% block title %} Career Page {% endblock title %}
+{% block body %}
+{% load crispy_forms_tags %}
+
+<!-- Title -->
+      <h3 class="mb-3 text-dark">Fill out the form below</h3>
+
+      <!-- Form START -->
+      <form class="" method="post">
+          {% include 'partials/_form_errors.html' %}
+          {{form|crispy}}
+          <input type="submit"  value="Apply">
+      </form>
+      <!-- Form END -->
+
+
+
+
+{% endblock body %}
+{% block scripts %}
+<script src="{% static 'js/functions.js' %}"></script>
+
+{% endblock scripts %}

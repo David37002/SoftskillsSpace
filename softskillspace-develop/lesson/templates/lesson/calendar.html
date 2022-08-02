@@ -1,0 +1,34 @@
+{% extends 'partials/_base.html' %}
+{% load static i18n %}
+{% block title %} Calendar {% endblock title %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block body %}
+
+<section class="bg-light py-0 py-sm-5">
+	<div class="container">
+		<div class="row py-5">
+			<div class="col-lg-12">
+				<!-- Badge -->
+				<h6 class="mb-3 font-base bg-primary text-white py-2 px-4 rounded-2 d-inline-block">My Calendar</h6>
+        {% if user.is_tutor %}
+				<p>Black represents lessons for which you are the student while blue represents lessons for which you are the tutor</p>
+        {% endif %}
+        <div class="card-body">
+          <div class="mb-3" id="calendar"></div>
+        </div>
+			</div>
+		</div>
+	</div>
+</section>
+
+{% endblock body %}
+
+{% block scripts %}
+{% include "partials/lesson/_calendar.html" %}
+{% endblock scripts %}
+
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
+{% endblock stylesheets %}

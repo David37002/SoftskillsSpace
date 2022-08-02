@@ -1,0 +1,190 @@
+{% extends "partials/_account_layout.html" %}
+{% load static %}
+
+{% load i18n %}
+{% load account %}
+
+{% block title %} {% trans "My Qualifications" %} {% endblock %}
+{% block stylesheets %}
+
+{% endblock %}
+<link rel="stylesheet" href="{% static 'vendor/sweetalert/sweetalert2.min.css' %}">
+{% block body %}
+
+<!-- Main content START -->
+<div class="col-xl-9">
+  <!-- Edit profile START -->
+  <div class="card bg-transparent border rounded-3">
+
+    <div class="row d-flex justify-content-between">
+      <!-- Profile info -->
+      <div class="col d-md-flex justify-content-between align-items-center">
+        <!-- Card header -->
+        <div class="card-header bg-transparent border-bottom">
+          <h3 class="card-header-title mb-0">Academic Qualification</h3>
+        </div>
+
+        <!-- Button -->
+        <div class="m-3 mb-0 d-flex align-items-center mt-2 mt-md-0">
+          <a href="#" class="btn btn-sm btn-primary mb-0" data-bs-toggle="modal" data-bs-target="#addQualification">Add
+            New
+            Qualification</a>
+        </div>
+      </div>
+    </div>
+    <!-- Card body START -->
+    <div class="card-body">
+      <div class="table-responsive border-0">
+        <table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+          <!-- Table head -->
+          <thead>
+            <tr>
+              <th scope="col" class="border-0 rounded-start">Qualification</th>
+              <th scope="col" class="border-0">Institution type</th>
+              <th scope="col" class="border-0">Level</th>
+              <th scope="col" class="border-0 rounded-end">Action</th>
+            </tr>
+          </thead>
+
+          <!-- Table body START -->
+          <tbody>
+            <!-- Table item -->
+            {% for qual in qualifications %}
+            <tr>
+              <!-- Course item -->
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="mb-0 ms-2">
+                    <!-- Title -->
+                    <h6><a href="#"><strong>{{qual.institution_name}}</strong></a></h6>
+                    <!-- Info -->
+                    <div class="d-sm-flex">
+                      <p class="h6 fw-light mb-0 small me-3"><i
+                          class="fas fa-graduation-cap text-orange me-2"></i>{{qual.course_taken}} ({{qual.date_range}})
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <!-- Institution type item -->
+              <td class="text-center text-sm-start">{{qual.get_institution_type_display}}</td>
+              <!-- Level item -->
+              <td>
+                <div class="badge bg-primary bg-opacity-10 text-primary">{{qual.get_level_display}}</div>
+              </td>
+              <!-- Action item -->
+              <td>
+                <!-- <a href="#" class="btn btn-sm btn-success-soft btn-round me-1 mb-0"><i
+                  class="far fa-fw fa-edit"></i>
+                </a> -->
+                <button class="btn btn-sm btn-danger-soft btn-round mb-0 btn-delete" data-id="{{qual.id}}"
+                  data-text="{{qual.course_taken}}">
+                  <i class="fas fa-fw fa-times"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <!-- Table body END -->
+        </table>
+      </div>
+    </div>
+    <!-- Card body END -->
+  </div>
+  <!-- Edit profile END -->
+
+
+</div>
+<!-- Main content END -->
+
+<!-- Add course modal START -->
+<div class="modal fade" id="addQualification" tabindex="-1" aria-labelledby="addQualificationLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" method="POST">
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title text-white" id="addQualificationLabel">Add New Qualification</h5>
+        <button type="button" class="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i
+            class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="row text-start g-3">
+          {% include "partials/_form_errors.html" %}
+
+          <!-- Question -->
+          <div class="col-12">
+            {{form.institution_name.label_tag}}
+            {{form.institution_name}}
+          </div>
+
+          <div class="col-12">
+            {{form.course_taken.label_tag}}
+            {{form.course_taken}}
+          </div>
+
+          <div class="col-6">
+            {{form.institution_type.label_tag}}
+            {{form.institution_type}}
+          </div>
+
+          <div class="col-6">
+            {{form.level.label_tag}}
+            {{form.level}}
+          </div>
+
+          <div class="col-6">
+            {{form.start_date.label_tag}}
+            {{form.start_date}}
+          </div>
+
+          <div class="col-6">
+            {{form.end_date.label_tag}}
+            {{form.end_date}}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger-soft my-0" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-success my-0">Add qualification</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Add course modal START -->
+{% endblock body %}
+
+{% block scripts %}
+<script src="{% static 'vendor/sweetalert/sweetalert2.all.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    $(".btn-delete").click(function () {
+      let btn = $(this);
+      let text = btn.attr("data-text");
+
+      Swal.fire({
+        icon: "warning",
+        html: `Are you sure you want to delete <b>${text}</b>`,
+        confirmButtonText: "Yes",
+        showDenyButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: `{% url "tutor:qualification-delete" %}`,
+            method: "POST",
+            data: { id: btn.attr("data-id") },
+            headers: { 'X-CSRFToken': '{{csrf_token}}' },
+            success: function (res) {
+              if (res.success == true) {
+                Swal.fire(res.msg, '', 'success')
+                location.reload();
+              }
+              else {
+                Swal.fire(res.msg, '', 'error')
+              }
+            }
+          })
+        }
+      })
+    })
+  });
+</script>
+{% endblock scripts %}

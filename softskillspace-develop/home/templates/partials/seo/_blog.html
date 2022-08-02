@@ -1,0 +1,22 @@
+{% load static %}
+<!-- Primary Meta Tags -->
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="name" content="{{blog.name}}">
+<meta name="author" content="softskillspace">
+<meta name="description" content="{{blog.content|truncatechars_html:80|safe}}">
+<meta name="keywords" content="educational, elearning, tutoring platform, knowledge and skill acquisition" />
+<meta property="og:image" content="{{blog.image_url}}">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ request.get_full_path }}">
+<meta property="og:name" content="{{blog.name}}">
+<meta property="og:description" content="{{blog.content|truncatechars_html:80|safe}}">
+<meta property="og:image" content="{{blog.image_url}}">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="{{ request.get_full_path }}">
+<meta property="twitter:name" content="{{blog.name}}">
+<meta property="twitter:description" content="{{blog.content|truncatechars_html:80|safe}}">
+<meta property="twitter:image" content="{{blog.image_url}}">

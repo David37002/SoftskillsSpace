@@ -1,0 +1,175 @@
+{% extends "partials/_account_layout.html" %}
+{% load static %}
+
+{% load i18n %}
+{% load account %}
+
+{% block title %} {% trans "Edit Profile" %} {% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/flag-icon/flag-icon.min.css' %}">
+{% endblock stylesheets %}
+
+{% block body %}
+
+<!-- Main content START -->
+<div class="col-xl-9">
+  <!-- Edit profile START -->
+  <div class="card bg-transparent border rounded-3">
+    <!-- Card header -->
+    <div class="card-header bg-transparent border-bottom">
+      <h3 class="card-header-title mb-0">Edit Profile</h3>
+    </div>
+    <!-- Card body START -->
+    <div class="card-body">
+      <!-- Form -->
+      <form class="row g-4" method="POST" enctype="multipart/form-data">
+        {% include "partials/_form_errors.html" %}
+        <!-- Profile picture -->
+        <div class="col-12 justify-content-center align-items-center">
+          <label class="form-label">Profile picture</label>
+          <div class="d-flex align-items-center">
+            <label class="position-relative me-4" for="profile_pic" title="Replace this pic">
+              <!-- Avatar place holder -->
+              <span class="avatar avatar-xl">
+                <img class="avatar-img rounded-circle border border-white border-3 shadow profile_pic-preview"
+                  src="{{user.image_url}}" alt="{{user}} image">
+              </span>
+              <!-- Remove btn -->
+              <button type="button" class="uploadremove"><i class="bi bi-x text-white"></i></button>
+            </label>
+            <!-- Upload button -->
+            <label class="btn btn-primary-soft mb-0" for="profile_pic">Change</label>
+            <input id="profile_pic" class="form-control d-none" type="file" name="profile_pic" accept="image/*">
+          </div>
+        </div>
+
+        <!-- Full name -->
+        <div class="col-md-6">
+          {{form.first_name.label_tag}}
+          {{form.first_name}}
+        </div>
+
+        <div class="col-md-6">
+          {{form.last_name.label_tag}}
+          {{form.last_name}}
+        </div>
+
+        <!-- About me -->
+        <div class="col-12">
+          <label>About me</label>
+          {{form.about}}
+          <div class="form-text">Brief description for your profile.</div>
+        </div>
+
+        <!-- Email id -->
+        <div class="col-md-6">
+          {{form.email.label_tag}}
+          <div class="input-group">
+            <span class="input-group-text">@</span>
+            {{form.email}}
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          {{form.date_of_birth.label_tag}}
+          {{form.date_of_birth}}
+        </div>
+
+        <!-- Country -->
+        <div class="col-md-6">
+          {{form.country.label_tag}}
+          <div class="input-group">
+            <span class="input-group-text"><i id="country_flag" class="flag-icon flag-icon-ng"></i></span>
+            {{form.country}}
+          </div>
+        </div>
+
+        <!-- Mobile number -->
+        <div class="col-md-6">
+          {{form.mobile_no.label_tag}}
+          <div class="input-group">
+            <span class="input-group-text" id="dialling_code">{{user.country.dialling_code|default:'+234'}}</span>
+            {{form.mobile_no}}
+          </div>
+        </div>
+
+        <!-- Gender -->
+        <div class="col-md-6">
+          {{form.gender.label_tag}}
+          {{form.gender}}
+        </div>
+
+        <!-- Password -->
+        <div class="col-md-6">
+          <label class="form-label">{{form.password.help_text|safe}}</label>
+        </div>
+
+        <!-- Save button -->
+        <div class="d-sm-flex justify-content-end">
+          <input type="submit" class="btn btn-primary mb-0" value="Save changes" />
+        </div>
+      </form>
+    </div>
+    <!-- Card body END -->
+  </div>
+  <!-- Edit profile END -->
+
+</div>
+<!-- Main content END -->
+{% endblock body %}
+
+
+{% block scripts %}
+<script>
+  $("#profile_pic").change(function () {
+    let fd = new FormData();
+    let files = $('#profile_pic')[0].files;
+    console.log(files)
+
+    if (files.length > 0) {
+      fd.append('file', files[0]);
+    }
+
+    $.ajax({
+      url: `{% url 'home:update-image' %}`,
+      method: "POST",
+      data: fd,
+      contentType: false,
+      processData: false,
+      headers: { 'X-CSRFToken': '{{csrf_token}}' },
+      success: function (res) {
+        console.log(res)
+        if (res.success == true) {
+          $(".profile_pic-preview").attr("src", res.image_url);
+        }
+      }
+    })
+  });
+
+  $(".uploadremove").click(function () {
+    $.ajax({
+      url: `{% url 'home:remove-image' %}`,
+      method: "POST",
+      headers: { 'X-CSRFToken': '{{csrf_token}}' },
+      success: function (res) {
+        $(".profile_pic-preview").attr("src", res.image_url)
+      }
+    })
+  });
+
+  $("#{{form.country.id_for_label}}").change(function () {
+    $.ajax({
+      url: `{% url 'home:change-country-data' %}`,
+      method: "POST",
+      data: { country: $(this).val() },
+      headers: { 'X-CSRFToken': '{{csrf_token}}' },
+      success: function (res) {
+        $("#dialling_code").text(res.dialling_code);
+        let newClass = `flag-icon flag-icon-${res.iso_code}`;
+        $("#country_flag").removeClass().addClass(newClass);
+      }
+    })
+  });
+</script>
+{% endblock scripts %}

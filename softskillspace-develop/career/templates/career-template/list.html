@@ -1,0 +1,153 @@
+{% extends "partials/_base.html" %}
+{% load static i18n %}
+{% block title %} Career Page {% endblock title %}
+{% block body %}
+  <div class="rounded-5">
+    <img src="{% static 'images/career/careerhome.jpg' %}" alt="">
+  </div>
+  <br>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-xl-6 text-center mx-auto">
+        <!-- Title -->
+        <h6 class="text-primary">Join Us</h6>
+        <h1 class="mb-4">Job Opening Available</h1>
+      </div>
+    </div>
+  </div>
+  <br>
+
+  <section class="pt-4">
+  	<div class="container">
+  		<!-- Search option START -->
+  		<form class="row mb-4 align-items-center">
+  			<!-- Search bar -->
+  			<div class="col-sm-8 col-md-6 col-xl-7 col-xl-4 mt-3 mt-xl-0">
+  				<div class="border rounded p-2">
+  					<div class="input-group input-borderless">
+  						<input class="form-control me-1" type="search" placeholder="Search subject taught"
+              minlength="2" maxlength="50" value="{{keyword|default:''}}" name="keyword">
+  					</div>
+  				</div>
+  			</div>
+
+  			<!-- Select option -->
+  			<div class="col-md-3 col-sm-4 col-xl-3 mt-3 mt-xl-0">
+  				<div class="border rounded p-2 input-borderless">
+            {% with sortby=request.GET.sortby %}
+  					<select class="form-select form-select-sm js-choice" aria-label=".form-select-sm" name="sortby">
+  						<option value="">Category</option>
+  						<option {% if sortby == 'rate-per-hour' %} selected {% endif %} value="rate-per-hour">Full Time</option>
+  						<option {% if sortby == 'hours-taught' %} selected {% endif %} value="hours-taught">Part Time</option>
+  						<option {% if sortby == 'ratings' %} selected {% endif %} value="ratings">Internship</option>
+  					</select>
+            {% endwith %}
+  				</div>
+  			</div>
+
+  			<!-- Button -->
+  			<div class="col-sm-6 col-md-3 col-xl-2 mt-3 mt-xl-0 d-grid">
+  				<button type="submit" class="btn btn-lg btn-primary mb-0">Search</button>
+  			</div>
+  		</form>
+
+  <section class="position-relative pt-0 pt-lg-5">
+  	<div class="container">
+  		<!-- <div class="row g-4"> -->
+  			<!-- Card item START -->
+              {% for career in careers %}
+
+          <!-- Career Home-->
+          <div class="tab-content">
+                        <div id="tab-1" class="tab-pane fade show p-0 active">
+                            <div class="job-item p-4 mb-4">
+                                <div class="row g-4">
+                                    <div class="col-sm-12 col-md-8 d-flex align-items-center">
+                                        <div class="text-start ps-4">
+                                            <h5 class="mb-3"><a href="{% url 'career:careerdetail' career.id %}">{{career.title}}</a></h5>
+                                            <p class="text-truncate-2">{{career.description | safe | truncatewords:20 }} <a href="#">Read More</a></p>
+                                            <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ career.location }}</span>
+                                            {% if career.type == '1' %}
+                                                <span class="text-truncate me-3"><i class="far fa-clock text-primary me-2"></i>Full Time</span>
+                                            {% elif career.type == '2' %}
+                                                <span class="text-truncate me-3"><i class="far fa-clock text-primary me-2"></i>Part Time</span>
+                                            {% else %}
+                                                <span class="text-truncate me-3"><i class="far fa-clock text-primary me-2"></i>Internship</span>
+                                            {% endif %}
+
+                                            <span class="text-truncate me-0"><i class="far fa-money-bill-alt text-primary me-2"></i>${{ career.salary}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
+                                        <div class="d-flex mb-3">
+                                            <!-- <a class="btn btn-light btn-square me-3" href=""><i class="far fa-heart text-primary"></i></a> -->
+                                            <a class="btn btn-primary" href="{% url 'career:careerdetail' career.id %}">Apply Now</a>
+                                        </div>
+                                        <small class="text-truncate"><i class="far fa-calendar-alt text-primary me-2"></i>DeadLine: {{ career.deadline|date:"D d M Y" }}</small>
+                                    </div>
+
+                                </div>
+                            </div>
+                          </div>
+
+            </div>
+
+
+        {% endfor %}
+  			<!-- Card item END -->
+
+  </section>
+
+  <section class="pt-3">
+  	<div class="container position-relative">
+  		<!-- SVG -->
+  		<figure class="position-absolute top-50 start-50 translate-middle ms-2">
+  			<svg>
+  				<path d="m496 22.999c0 10.493-8.506 18.999-18.999 18.999s-19-8.506-19-18.999 8.507-18.999 19-18.999 18.999 8.506 18.999 18.999z" fill="#fff" fill-rule="evenodd" opacity=".502"/>
+  				<path d="m775 102.5c0 5.799-4.701 10.5-10.5 10.5-5.798 0-10.499-4.701-10.499-10.5 0-5.798 4.701-10.499 10.499-10.499 5.799 0 10.5 4.701 10.5 10.499z" fill="#fff" fill-rule="evenodd" opacity=".102"/>
+  				<path d="m192 102c0 6.626-5.373 11.999-12 11.999s-11.999-5.373-11.999-11.999c0-6.628 5.372-12 11.999-12s12 5.372 12 12z" fill="#fff" fill-rule="evenodd" opacity=".2"/>
+  				<path d="m20.499 10.25c0 5.66-4.589 10.249-10.25 10.249-5.66 0-10.249-4.589-10.249-10.249-0-5.661 4.589-10.25 10.249-10.25 5.661-0 10.25 4.589 10.25 10.25z" fill="#fff" fill-rule="evenodd" opacity=".2"/>
+  			</svg>
+  		</figure>
+
+  		<div class="bg-success p-4 p-sm-5 rounded-3">
+  			<div class="row justify-content-center position-relative">
+  				<!-- Svg -->
+  				<figure class="fill-white opacity-1 position-absolute top-50 start-0 translate-middle-y">
+  					<svg width="141px" height="141px">
+  						<path d="M140.520,70.258 C140.520,109.064 109.062,140.519 70.258,140.519 C31.454,140.519 -0.004,109.064 -0.004,70.258 C-0.004,31.455 31.454,-0.003 70.258,-0.003 C109.062,-0.003 140.520,31.455 140.520,70.258 Z"/>
+  					</svg>
+  				</figure>
+  				<!-- Action box -->
+  				<div class="col-11 position-relative">
+  					<div class="row align-items-center">
+  						<!-- Title -->
+  						<div class="col-lg-7">
+  							<h3 class="text-white">Become a Tutor!</h3>
+  							<p class="text-white mb-3 mb-lg-0">Interested in making a difference while still earning and utilising your knowledge and experience, why not join our team of trusted professionals and academicians</p>
+  						</div>
+  						<!-- Button -->
+  						<div class="col-lg-5 text-lg-end">
+  							<a href="#" class="btn btn-dark mb-0">Start Teaching today</a>
+  						</div>
+  					</div>
+  				</div>
+  			</div>
+  		</div>
+  	</div>
+  </section>
+
+
+
+
+
+
+
+
+
+
+{% endblock body %}
+{% block scripts %}
+<script src="{% static 'js/functions.js' %}"></script>
+
+{% endblock scripts %}

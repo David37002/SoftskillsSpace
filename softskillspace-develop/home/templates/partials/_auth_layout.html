@@ -1,0 +1,47 @@
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info_list for LANGUAGES as languages %}
+
+{% spaceless %}
+<!doctype html>
+<html lang="{{LANGUAGE_CODE}}">
+
+<head>
+
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="msapplication-TileColor" content="#ffffff" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+
+  <meta name="keywords" content="Educational platform for e-learning, knowledge and skill acquisition" />
+  <meta name="author" content="Soft Skill Space" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{request.scheme}}://{{request.get_host}}">
+  <meta name="description" content="LMS, Educational platform for e-learning, knowledge and skill acquisition." />
+
+  {% include "partials/_stylesheet.html" %}
+
+  {% block stylesheets %} {% endblock stylesheets %}
+
+  <!-- Title -->
+  <title>{% block title %} {% endblock title %} - Soft Skill Space</title>
+</head>
+
+<body>
+  <!-- **************** MAIN CONTENT START **************** -->
+  <main>
+    {% block body %} {% endblock body %}
+  </main>
+  <!-- **************** MAIN CONTENT END **************** -->
+
+  {% include 'partials/_script.html' %}
+
+  {% block scripts %} {% endblock scripts %}
+</body>
+
+</html>
+{% endspaceless %}

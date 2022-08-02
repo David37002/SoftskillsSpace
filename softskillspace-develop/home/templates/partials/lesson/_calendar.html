@@ -1,0 +1,22 @@
+{% load static %}
+ 
+<script src="{% static 'vendor/moment/moment-with-locales.min.js' %}"></script>
+<script src="{% static 'vendor/moment/moment.min.js' %}"></script>
+<script src="{% static 'vendor/jquery/jquery-ui.min.js' %}"></script>
+<script src="{% static 'vendor/fullcalendar/fullcalendar.min.js' %}"></script>
+<script src="{% static 'vendor/fullcalendar/locale-all.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    $('#calendar').fullCalendar({
+      // put your options and callbacks here
+      events: "{% url 'lesson:calendar-json' %}",
+      locale: "{{LANGUAGE_CODE}}",
+      selectable: true,
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay'
+      }
+    })
+  });
+</script>

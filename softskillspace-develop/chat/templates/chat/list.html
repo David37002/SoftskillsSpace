@@ -1,0 +1,50 @@
+{% extends "partials/_base.html" %}
+{% load static i18n %}
+{% block title %} Chats {% endblock title %}
+
+{% block body %}
+<section class="">
+  <div class="container mt-0">
+
+    <!-- Title and SVG START -->
+    <div class="row position-relative mb-0 pb-0">
+      <div class="col-lg-8 text-center mx-auto position-relative">
+
+        <!-- Title -->
+        <h1>Messages</h1>
+
+        <!-- Search course -->
+
+      </div>
+    </div>
+    <!-- Title and SVG END -->
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="row g-4">
+      {% for chat in chats %}
+        {% for mem in chat.participants.all %}
+          {% if mem != user %}
+          <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card card-body shadow rounded-3">
+              <div class="d-flex align-items-center">
+                <!-- Icon -->
+                <div class="icon-lg"><img class="avatar img-thumbnail rounded-circle" src="{{mem.image_url}}" alt="{{mem}}">
+                </div>
+                <div class="ms-3">
+                  <h5 class="mb-0"><a href="{% url 'chat:detail' chat.uuid %}" class="stretched-link">{{mem}}</a></h5>
+                  <a href="{% url 'chat:detail' chat.uuid %}"><i class="fab fa-facebook-messenger"></i> Send message</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock body %}

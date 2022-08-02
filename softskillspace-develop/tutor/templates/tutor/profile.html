@@ -1,0 +1,276 @@
+{% extends "partials/_base.html" %}
+{% load static i18n humanize %}
+{% block title %} {{tutor}} Profile {% endblock title %}
+
+{% block body %}
+<!-- Page content START -->
+<section class="pt-5 pb-0">
+	<div class="container">
+		<div class="row g-0 g-lg-5">
+
+			<!-- Left sidebar START -->
+			<div class="col-lg-4">
+				<div class="row">
+					<div class="col-md-6 col-lg-12">
+						<!-- Instructor image START -->
+            <div class="card shadow p-2 mb-4 text-center">
+              <div class="rounded-3">
+                <!-- Image -->
+                <img src="{{tutor.user.image_url}}" class="card-img" alt="{{tutor}} image">
+              </div>
+    
+              <!-- Card body -->
+              <div class="card-body px-3">
+                <!-- Rating -->
+                {{star_rating}}
+              </div>
+              
+              <ul class="list-inline mb-0">
+                <li class="list-inline-item"> <a class="btn px-2 btn-sm bg-facebook" href="https://www.facebook.com/sharer/sharer.php?u={{request.build_absolute_uri}}&quote=Please visit my Tutor profile on Soft Skill Space at {{request.build_absolute_uri}}" target="_blank"><i class="fab fa-fw fa-facebook-f"></i></a> </li>
+                <li class="list-inline-item"> <a class="btn px-2 btn-sm bg-instagram-gradient" href="https://www.instagram.com/thesoftskillspace" target="_blank"><i class="fab fa-fw fa-instagram"></i></a> </li>
+                <li class="list-inline-item"> <a class="btn px-2 btn-sm bg-twitter" href="https://twitter.com/intent/tweet?text=Please visit my Tutor profile on Soft Skill Space at {{request.build_absolute_uri}}" target="_blank"><i class="fab fa-fw fa-twitter"></i></a> </li>
+                <li class="list-inline-item"> <a class="btn px-2 btn-sm bg-success" href="https://api.whatsapp.com/send?text=Please visit my Tutor profile on Soft Skill Space at {{request.build_absolute_uri}}" target="_blank"><i class="fab fa-fw fa-whatsapp text-white"></i></a> </li>
+              </ul>
+            </div>
+						<!-- Instructor image END -->
+					</div>
+
+					<div class="col-md-6 col-lg-12">
+						<div class="card card-body shadow p-4 mb-4">
+
+              {% with qualifications=tutor.tutorqualification_set.all %}
+              {% if qualifications %}
+							<!-- Education START -->
+							<!-- Title -->
+							<h4 class="mb-3">Education</h4>
+							<!-- Education item -->
+              {% for qual in qualifications %}
+							<div class="d-flex align-items-center mb-4">
+								<span class="icon-md text-dark mb-0 bg-light rounded-3"><i class="fas fa-graduation-cap"></i></span>
+								<div class="ms-3">
+									<h6 class="mb-0">{{qual.institution_name}}</h6>
+									<p class="mb-0 small">{{qual.course_taken}} ({{qual.date_range}})</p>
+								</div>
+							</div>
+              {% endfor %}
+
+							<hr> <!-- Divider -->
+              {% endif %}
+              {% endwith %}
+              
+							<!-- Subjects START -->
+							<h4 class="mb-3">Subjects taught</h4>
+
+							<!-- Subjects END -->
+              <ul class="list-inline mb-0">
+              {% for tutor_subject in subjects %}
+								<li class="list-inline-item"><a class="btn btn-outline-light btn-sm" href="#">{{tutor_subject.subject.name}}</a></li>
+              {% endfor %}
+							</ul>
+						</div>
+					</div>
+				</div> <!-- Row End -->
+			</div>
+			<!-- Left sidebar END -->
+				
+			<!-- Main content START -->
+			<div class="col-lg-8">
+			
+				<!-- Title -->
+				<h5 class="mb-0">Hi, I am</h5>
+				<h1 class="mb-0">{{tutor}}</h1>
+				<p>{{tutor.bio}}</p>
+
+        {% if user.tutor != tutor %}
+        <form action="{% url 'chat:create-chat' %}" method="POST">
+          {% include "partials/_form_errors.html" %}
+          <input type="hidden" name="tutor_user_id" value="{{tutor.user.id}}">
+          <button type="submit" class="m-1 btn btn-success"><i class="bi bi-messenger"></i> Send message</button>
+          <a href="{% url 'student:book-a-lesson' tutor.id %}" class="m-1 btn btn-primary"><i class="bi bi-calendar-date-fill"></i> Book lesson</a>
+        </form>
+        {% endif %}
+				<!-- Content -->
+				<p class="mt-4">{{tutor.user.about|linebreaks}}</p>
+
+				<!-- Personal info -->
+				<ul class="list-group list-group-borderless">
+					<li class="list-group-item px-0">
+						<span class="h6 fw-light"><i class="fas fa-fw fa-globe text-primary me-1 me-sm-3"></i>Share profile link: </span>
+              <button class="btn btn-sm btn-info clipboard" data-clipboard-text="{{request.build_absolute_uri}}">
+                <i class="fa fa-clipboard"></i> Copy share link
+              </button>
+					</li>
+				</ul>
+
+				<!-- Counter START -->
+				<div class="row mt-4 g-3">
+          <!-- Counter item -->
+					<div class="col-sm-6 col-lg-4">
+						<div class="d-flex align-items-center">
+							<span class="icon-lg text-orange bg-orange bg-opacity-10 rounded-3 mb-0"><i class="fas fa-money-bill"></i></span>
+							<div class="ms-3">
+								<div class="d-flex">
+									<h5 class="mb-0 fw-bold">₦ {{tutor.rate_per_hour|intcomma}}</h5>
+									<!-- <span class="mb-0 h5">+</span> -->
+								</div>
+								<p class="mb-0 h6 fw-light">per hour</p>
+							</div>
+						</div>
+					</div>
+					<!-- Counter item -->
+					<div class="col-sm-6 col-lg-4">
+						<div class="d-flex align-items-center">
+							<span class="icon-lg text-success mb-0 bg-success bg-opacity-10 rounded-3"><i class="fas fa-clock"></i></span>
+							<div class="ms-3">
+								<div class="d-flex">
+									<h5 class="purecounter mb-0 fw-bold" data-purecounter-start="0" data-purecounter-end="{{tutor_stat.hours_taught|default:'0'}}"	data-purecounter-delay="200">{{tutor_stat.hours_taught|default:0|intcomma}}</h5>
+									<span class="mb-0 h5">+</span>
+								</div>
+								<p class="mb-0 h6 fw-light">Hours taught</p>
+							</div>
+						</div>
+					</div>
+					<!-- Counter item -->
+					<div class="col-sm-6 col-lg-4">
+						<div class="d-flex align-items-center">
+							<span class="icon-lg text-purple bg-purple bg-opacity-10 rounded-3 mb-0"><i class="text-warning fas fa-star"></i></span>
+							<div class="ms-3">
+								<div class="d-flex">
+									<h5 class="purecounter mb-0 fw-bold" data-purecounter-start="0" data-purecounter-end="{{tutor_stat.total_reviews}}"	data-purecounter-delay="200">{{tutor_stat.total_reviews|intcomma}}</h5>
+									<!-- <span class="mb-0 h5">+</span> -->
+								</div>
+								<p class="mb-0 h6 fw-light">Total Reviews</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Availability START -->
+				<div class="row g-4 mt-4">
+					<!-- Title -->
+					<h2>Availabililty</h2>
+
+					<!-- Card item START -->
+					<div class="col-sm-12">
+						<div class="card shadow h-100 p-4">
+              <table class="table table-borderless table-hover">
+                <thead>
+                  <tr class="lead">
+                    <th>Day</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td>Monday</td>
+                    <td>{{tutor.tutoravailability.monday|default:"<span class='text-danger'>Unavailable</span>"}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>Tuesday</td>
+                    <td>{{tutor.tutoravailability.tuesday|default:"<span class='text-danger'>Unavailable</span>"}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>Wednesday</td>
+                    <td>{{tutor.tutoravailability.wednesday|default:"<span class='text-danger'>Unavailable</span>"}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>Thursday</td>
+                    <td>{{tutor.tutoravailability.thursday|default:"<span class='text-danger'>Unavailable</span>"}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>Friday</td>
+                    <td>{{tutor.tutoravailability.friday|default:"<span class='text-danger'>Unavailable</span>"}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>Saturday</td>
+                    <td>{{tutor.tutoravailability.saturday|default:"<span class='text-danger'>Unavailable</span>"}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>Sunday</td>
+                    <td>{{tutor.tutoravailability.sunday|default:"<span class='text-danger'>Unavailable</span>"}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+					</div>
+					<!-- Card item END -->
+				</div>
+				<!-- Availability END -->
+
+        <!-- Review start -->
+				<div class="row g-4 mt-4 mb-4">
+					<!-- Title -->
+					<h2>Recent reviews</h2>
+
+					<!-- Card item START -->
+					<div class="col-sm-12">
+						<div class="card shadow h-100">
+							<!-- Image -->
+              <div class="card-body p4">
+                {% for review in reviews %}
+									<!-- Review item START -->
+									<div class="d-md-flex my-4">
+										<!-- Avatar -->
+										<div class="avatar avatar-xl me-4 flex-shrink-0">
+											<img class="avatar-img rounded-circle" src="{{review.lesson.student.image_url}}" alt="{{review.lesson.student}} avatar">
+										</div>
+										<!-- Text -->
+										<div>
+											<div class="d-sm-flex mt-1 mt-md-0 align-items-center">
+												<h5 class="me-3 mb-0">{{review.lesson.student}}</h5>
+												<!-- Review star -->
+												{{review.star_rating}}
+											</div>
+											<!-- Info -->
+											<p class="small mb-2">{{review.created_at|timesince}} ago</p>
+											<p class="mb-2">{{review.comment|linebreaksbr}}</p>
+										</div>	
+									</div>
+
+                  {% empty %}
+                  <div>
+                    <div class="d-sm-flex mt-1 mt-md-0 align-items-center">
+                      <h5 class="me-3 mb-0">No reviews yet</h5>
+                    </div>
+                  </div>	
+                  {% endfor %}
+              </div>
+						</div>
+					</div>
+					<!-- Card item END -->
+				</div>
+        <!-- Review end -->
+      </div>
+			<!-- Main content END -->
+
+		</div><!-- Row END -->
+	</div>
+</section>
+<!-- =======================
+Page content END -->
+{% endblock body %}
+
+
+{% block scripts %}
+<script src="{% static 'js/clipboard.min.js' %}"></script>
+<script>
+  var btns = document.querySelectorAll('.clipboard'); for (var i = 0; i < btns.length; i++) { btns[i].addEventListener('mouseleave', clearTooltip); btns[i].addEventListener('blur', clearTooltip); }
+function clearTooltip(e) { e.currentTarget.setAttribute('class', 'btn btn-info btn-sm clipboard'); e.currentTarget.removeAttribute('aria-label'); }
+function showTooltip(elem, msg) { elem.setAttribute('class', 'btn btn-success btn-sm clipboard'); elem.innerText = msg; }
+function fallbackMessage(action) {
+    var actionMsg = ''; var actionKey = (action === 'cut' ? 'X' : 'C'); if (/iPhone|iPad/i.test(navigator.userAgent)) { actionMsg = 'No support :('; }
+    else if (/Mac/i.test(navigator.userAgent)) { actionMsg = 'Press ⌘-' + actionKey + ' to ' + action; }
+    else { actionMsg = 'Press Ctrl-' + actionKey + ' to ' + action; }
+    return actionMsg;
+}
+
+var clipboard = new ClipboardJS('.clipboard'); clipboard.on('success', function (e) { e.clearSelection(); console.info('Action:', e.action); console.info('Text:', e.text); console.info('Trigger:', e.trigger); showTooltip(e.trigger, 'Copied!'); }); clipboard.on('error', function (e) { console.error('Action:', e.action); console.error('Trigger:', e.trigger); showTooltip(e.trigger, fallbackMessage(e.action)); });
+</script>
+{% endblock scripts %}

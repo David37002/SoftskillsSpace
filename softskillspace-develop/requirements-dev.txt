@@ -1,0 +1,6 @@
+-r requirements.txt
+autopep8==1.6.0
+faker==13.3.2
+isort==5.10.1
+pylint==2.12.2
+black==22.1.0

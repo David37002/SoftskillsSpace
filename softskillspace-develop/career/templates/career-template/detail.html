@@ -1,0 +1,48 @@
+{% extends "partials/_base.html" %}
+{% load static i18n %}
+{% block title %} Career Page {% endblock title %}
+{% block body %}
+
+<section class="bg-light-gray">
+        <div class="container">
+            <h1 class="heading">{{ careerd.title }}
+            </h1>
+            <div class="job-detail-description"><i class="fa fa-map-marker job__location"> </i>
+                {{ careerd.location }} | Posted {{ careerd.created_at|timesince }} Ago  |
+                {% if careerd.type == '1' %}
+                    <span class="btn btn-primary">Full time</span>
+                {% elif careerd.type == '2' %}
+                    <span class="btn btn-primary">Part time</span>
+                {% else %}
+                    <span class="btn btn-primary">Internship</span>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h4>Category: {{ careerd.category }}</h4>
+                    <h5>Posted: {{ careerd.last_date|date }}</h5>
+                    <h6 class = "text-danger" >Deadline: {{ careerd.last_date|date }}</h6>
+                    <h6 class="text-info">Salary: {{ careerd.salary}}</h6>
+                    <blockquote class="blockquote">
+                        <p>{{ careerd.description }}</p>
+                    </blockquote>
+
+
+                    </div>
+                </div>
+            </div>
+    </section>
+    <div class="container">
+      <a class="btn btn-success" href="{% url 'career:candidateformview' %}">Apply Now</a>
+    </div>
+    <br>
+
+{% endblock body %}
+{% block scripts %}
+<script src="{% static 'js/functions.js' %}"></script>
+
+{% endblock scripts %}

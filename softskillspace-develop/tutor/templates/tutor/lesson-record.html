@@ -1,0 +1,145 @@
+{% extends "partials/_base.html" %}
+{% load static %}
+
+{% load i18n %}
+{% load account %}
+
+{% block title %} {% trans "Lessons" %} {% endblock %}
+
+{% block body %}
+
+<!-- Main content START -->
+<section class="bg-light py-3 py-sm-5">
+  <div class="container">
+    <div class="row">
+
+      <!-- Main content START -->
+      <div class="col-xl-12">
+
+        <!-- Card START -->
+        <div class="card border bg-transparent rounded-3">
+          <!-- Card header START -->
+          <div class="card-header bg-transparent border-bottom">
+            <h3 class="mb-0">Lesson records</h3>
+            <p>All previous and upcoming lessons since you became a tutor</p>
+          </div>
+          <!-- Card header END -->
+
+          <!-- Card body START -->
+          <div class="card-body">
+
+            <!-- Search and select START -->
+            <form class="row g-3 align-items-center justify-content-between mb-4">
+              <!-- Select option -->
+              <!-- Search -->
+              <div class="col-md-6">
+                <div class="rounded position-relative">
+                  <input class="form-control pe-5 bg-transparent" type="search"
+                    placeholder="Search subject or student name" aria-label="Search" name="search"
+                    value="{{request.GET.search|default:''}}">
+                  <button class="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                    type="submit"><i class="fas fa-search fs-6 "></i></button>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div>
+                  <select class="form-select js-choice border-0 z-index-9 bg-transparent" aria-label=".form-select-sm"
+                    name="status">
+                    <option value="">All</option>
+                    <option {% if request.GET.status == LessonStatus.Cancelled %} selected {% endif %} value="{{LessonStatus.Cancelled}}">{{LessonStatus.Cancelled.label}}
+                      lessons </option>
+                    <option {% if request.GET.status == 'booking-pending' %} selected {% endif %} value="booking-pending">Booking pending </option>
+                    <option {% if request.GET.status == LessonPaymentStatus.Paid %} selected {% endif %}
+                      value="{{LessonPaymentStatus.Paid}}">Paid</option>
+                    <option {% if request.GET.status == LessonPaymentStatus.Pending %} selected {% endif %}
+                      value="{{LessonPaymentStatus.Pending}}">Pending payment</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-primary">Search</button>
+              </div>
+            </form>
+            <!-- Search and select END -->
+
+            <!-- Order list table START -->
+            <div class="table-responsive border-0">
+              <!-- Table START -->
+              <table class="table table-light align-middle p-4 mb-0 table-hover">
+                <!-- Table head -->
+                <thead>
+                  <tr>
+                    <th scope="col" class="border-0 rounded-start">Subject</th>
+                    <th scope="col" class="border-0">Student name</th>
+                    <th scope="col" class="border-0">Date</th>
+                    <th scope="col" class="border-0">Duration</th>
+                    <th scope="col" class="border-0">Status</th>
+                    <th scope="col" class="border-0 rounded-end">Action</th>
+                  </tr>
+                </thead>
+
+                <!-- Table body START -->
+                <tbody>
+                  {% for lesson in lessons %}
+                  <!-- Table item -->
+                  <tr>
+                    <!-- Table data -->
+                    <td>
+                      <h6 class="mt-2 mt-lg-0 mb-0"><a href="#">{{lesson.subject.name}}</a></h6>
+                    </td>
+
+                    <!-- Table data -->
+                    <td class="text-center text-sm-start text-primary-hover">{{lesson.student}}</td>
+
+                    <!-- Table data -->
+                    <td>{{lesson.start_datetime}}</td>
+
+                    <!-- Table data -->
+                    <td>{{lesson.duration}}</td>
+
+                    <!-- Table data -->
+                    {% if lesson.status == LessonStatus.Cancelled %}
+                    <td><span class="badge bg-danger bg-opacity-10 text-danger">Cancelled</span></td>
+                    {% elif lesson.status == LessonStatus.Pending %}
+                    <td><span class="badge bg-warning bg-opacity-10 text-warning">Booking unconfirmed</span></td>
+                    {% elif lesson.lessonpayment.status == LessonPaymentStatus.Paid %}
+                    <td><span
+                        class="badge bg-success bg-opacity-10 text-success">{{lesson.lessonpayment.get_status_display}}</span>
+                    </td>
+                    {% elif lesson.lessonpayment.status == LessonPaymentStatus.Pending %}
+                    <td><span
+                        class="badge bg-warning bg-opacity-10 text-warning">{{lesson.lessonpayment.get_status_display}}</span>
+                    </td>
+                    {% else %}
+                    <td>-</td>
+                    {% endif %}
+
+                    <td>
+                      {% if lesson.booked_by == user and lesson.status == LessonStatus.Pending %}
+                      <a href="{% url 'lesson:detail' lesson.uuid %}" class="btn btn-danger"><i class="bi bi-bell-fill"></i></a>
+                      {% else %}
+                      <a href="{% url 'lesson:detail' lesson.uuid %}" class="btn btn-info"><i class="bi bi-eye-fill"></i></a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <!-- Table body END -->
+              </table>
+              <!-- Table END -->
+            </div>
+            <!-- Order list table END -->
+
+          </div>
+          <!-- Card body START -->
+        </div>
+        <!--Card END  -->
+      </div>
+      <!-- Main content END -->
+    </div><!-- Row END -->
+  </div>
+</section>
+<!-- Main content END -->
+{% endblock body %}

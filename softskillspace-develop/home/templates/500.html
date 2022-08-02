@@ -1,0 +1,23 @@
+{% extends "partials/_base.html" %}
+{% load static i18n %}
+{% block title %} Server Error {% endblock title %}
+{% block body %}
+<section class="pt-5">
+	<div class="container">
+		<div class="row">
+			<div class="col-12 text-center">
+				<!-- Image -->
+				<img src="{% static 'images/element/error404-01.svg' %}" class="h-200px h-md-400px mb-4" alt="">
+				<!-- Title -->
+				<h1 class="display-1 text-danger mb-0">500</h1>
+				<!-- Subtitle -->
+				<h2>Oh no, something seriously went wrong!</h2>
+				<!-- info -->
+				<p class="mb-4">The problem is from us, we should be backup before you finish your coffee</p>
+				<!-- Button -->
+				<a href="{% url 'home:index' %}" class="btn btn-primary mb-0">Take me to Homepage</a>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock body %}
